@@ -44,12 +44,15 @@
         }
         .message {
             margin: 10px 0;
+            word-wrap: break-word;
         }
         .message.user {
-            text-align: right;
+            text-align: left;
+            color: blue;
         }
         .message.bot {
             text-align: left;
+            color: green;
         }
     </style>
     <script>
@@ -68,13 +71,13 @@
                 return response.json();
             })
             .then(data => {
-                addMessage(prompt, 'user');
-                addMessage(data.response, 'bot');
+                addMessage('我：' + prompt, 'user');
+                addMessage('小小帅：' + data.response, 'bot');
                 document.getElementById('prompt').value = '';
             })
             .catch(error => {
                 console.error('There was a problem with the fetch operation:', error);
-                addMessage('Error: ' + error.message, 'bot');
+                addMessage('小小帅：Error: ' + error.message, 'bot');
             });
         }
 
