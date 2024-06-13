@@ -2,6 +2,56 @@
 <html>
 <head>
     <title>API Request</title>
+    <style>
+        body {
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+            height: 100vh;
+            margin: 0;
+            font-family: Arial, sans-serif;
+        }
+        .chat-container {
+            flex: 1;
+            overflow-y: auto;
+            padding: 10px;
+        }
+        .input-container {
+            display: flex;
+            justify-content: center;
+            padding: 10px;
+            border-top: 1px solid #ccc;
+        }
+        .input-container input {
+            width: 80%;
+            padding: 10px;
+            font-size: 16px;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+        }
+        .input-container button {
+            padding: 10px 20px;
+            margin-left: 10px;
+            font-size: 16px;
+            border: none;
+            background-color: #007bff;
+            color: white;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+        .input-container button:hover {
+            background-color: #0056b3;
+        }
+        .message {
+            margin: 10px 0;
+        }
+        .message.user {
+            text-align: right;
+        }
+        .message.bot {
+            text-align: left;
+        }
+    </style>
     <script>
         function sendRequest(prompt) {
             fetch('https://a7b18646-0bbc-423a-b3fd-c5241185c625-00-2iq8c4k1ejte5.kirk.replit.dev/gpt4o', {
@@ -18,28 +68,51 @@
                 return response.json();
             })
             .then(data => {
-                document.getElementById('response').innerText = data.response;
+                addMessage(prompt, 'user');
+                addMessage(data.response, 'bot');
+                document.getElementById('prompt').value = '';
             })
             .catch(error => {
                 console.error('There was a problem with the fetch operation:', error);
-                document.getElementById('response').innerText = 'Error: ' + error.message;
+                addMessage('Error: ' + error.message, 'bot');
             });
+        }
+
+        function addMessage(message, sender) {
+            var chatContainer = document.querySelector('.chat-container');
+            var messageElement = document.createElement('div');
+            messageElement.classList.add('message', sender);
+            messageElement.innerText = message;
+            chatContainer.appendChild(messageElement);
+            chatContainer.scrollTop = chatContainer.scrollHeight;
         }
 
         window.onload = function() {
             document.getElementById('submit').addEventListener('click', function() {
                 var prompt = document.getElementById('prompt').value;
-                sendRequest(prompt);
+                if (prompt.trim() !== '') {
+                    sendRequest(prompt);
+                }
+            });
+
+            document.getElementById('prompt').addEventListener('keypress', function(event) {
+                if (event.key === 'Enter') {
+                    var prompt = document.getElementById('prompt').value;
+                    if (prompt.trim() !== '') {
+                        sendRequest(prompt);
+                    }
+                }
             });
         };
     </script>
 </head>
 <body>
-    <h1></h1>
-    <label for="prompt"></label>
-    <input type="text" id="prompt" name="prompt">
-    <button id="submit">发送</button>
-    <h2></h2>
-    <p id="response"></p>
+    <div class="chat-container">
+        <!-- Messages will be appended here -->
+    </div>
+    <div class="input-container">
+        <input type="text" id="prompt" name="prompt" placeholder="Enter your message">
+        <button id="submit">发送</button>
+    </div>
 </body>
 </html>
