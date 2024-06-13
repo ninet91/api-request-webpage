@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>API Request</title>
+    <script>
+        function sendRequest(prompt) {
+            fetch('https://a7b18646-0bbc-423a-b3fd-c5241185c625-00-2iq8c4k1ejte5.kirk.replit.dev/gpt4o', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({ prompt: prompt })
+            })
+            .then(response => response.json())
+            .then(data => {
+                window.ReactNativeWebView.postMessage(data.response);
+            })
+            .catch(error => {
+                window.ReactNativeWebView.postMessage('Error: ' + error.message);
+            });
+        }
+
+        window.onload = function() {
+            window.addEventListener('message', function(event) {
+                var prompt = event.data;
+                sendRequest(prompt);
+            });
+        };
+    </script>
+</head>
+<body>
+</body>
+</html>
